@@ -113,7 +113,7 @@ def test_format(obj, precision=2):
         return str(obj)
 
 def find_lines(varname):
-    return [line for line in open(asgn_folder+asgn_name+'.py') if line.startswith(varname)]
+    return [line for line in open(asgn_path) if line.startswith(varname)]
 
 def find_line(varname):
     ls = find_lines(varname)
@@ -359,9 +359,10 @@ if __name__ == '__main__':
     parser.add_argument('--show-feedback', default=False, action='store_true', help=argparse.SUPPRESS)
 
     args = parser.parse_args()
-    asgn_package = args.assign
-    asgn_folder = '/'.join(os.path.splitext(args.assign)[0].split('.')) + '/'
-    asgn_name = os.path.splitext(args.assign)[1].strip('.')
+    asgn_path = args.assign
+    asgn_folder = '/'.join(args.assign.split('/')[:-1]) + '/'
+    asgn_package = '.'.join(os.path.splitext(args.assign)[0].split('/'))
+    asgn_name = os.path.splitext(args.assign)[0].split('/')[-1]
     report = args.report
     location = args.location
     dry_run = args.dry_run
