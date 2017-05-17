@@ -1,4 +1,4 @@
-########                                     ######## 
+########                                     ########
 # Hi there, curious student.                         #
 #                                                    #
 # This submission script downloads some tests,       #
@@ -11,19 +11,17 @@
 # that would be run without actually running them.   #
 ########                                     ########
 
-import os, sys, doctest, traceback, urllib.request, urllib.parse, urllib.error, base64, ast, re, imp, ast, json
-import hashlib
-import pdb
+import os, sys, doctest, traceback, urllib.request, urllib.parse, urllib.error, base64, ast, re, imp, ast, importlib
 
+SUBMIT_VERSION = '5.0'
 
-SUBMIT_VERSION = '4.0'
-
-RECEIPT_DIR = os.path.join('.', 'receipts');
-
-session    = 'matrix-002'
-grader_url = 'class.coursera.org/%s/assignment' % session
-static_url = 'courseratests.codingthematrix.com'
-protocol = 'https'
+#RECEIPT_DIR = os.path.join('.', 'receipts');
+grader_url = 'edition1.gradingthematrix.appspot.com'
+static_url = 'edition1tests.codingthematrix.com'
+protocol = 'http'
+#rcptdir_ok = None
+overwrite_policy = None
+#receipts = None
 dry_run = False
 verbose = False
 show_submission = False
@@ -113,9 +111,9 @@ def test_format(obj, precision=2):
         return '%s(%s, %s)' % (otype.__name__, tf(obj.D), entries)
     else:
         return str(obj)
-         
+
 def find_lines(varname):
-    return [line for line in open(asgn_name+'.py') if line.startswith(varname)]
+    return [line for line in open(asgn_folder+asgn_name+'.py') if line.startswith(varname)]
 
 def find_line(varname):
     ls = find_lines(varname)
@@ -163,10 +161,10 @@ class ModifiedDocTestRunner(doctest.DocTestRunner):
     def __init__(self, *args, **kwargs):
         self.results = []
         return super(ModifiedDocTestRunner, self).__init__(*args, checker=OutputAccepter(), **kwargs)
-    
+
     def report_success(self, out, test, example, got):
         self.results.append(got)
-    
+
     def report_unexpected_exception(self, out, test, example, exc_info):
         exf = traceback.format_exception_only(exc_info[0], exc_info[1])[-1]
         self.results.append(exf)
@@ -176,56 +174,27 @@ class OutputAccepter(doctest.OutputChecker):
     def check_output(self, want, got, optionflags):
         return True
 
-def do_challenge(login, passwd, sid):
-    login, ch, state, ch_aux = get_challenge(login, sid)
-    if not all((login, ch, state)):
-        print('\n!! Challenge Failed: %s\n' % login)
-        sys.exit(1)
-    return challenge_response(login, passwd, ch), state
+def parse_feedback(feedback):
+    return ast.literal_eval(feedback)
 
-def get_challenge(email, sid):
-    values = {'email_address': email, "assignment_part_sid": sid, "response_encoding": "delim"}
-    data = urllib.parse.urlencode(values).encode('utf8')
-    req  = urllib.request.Request(challenge_url, data)
-    with urllib.request.urlopen(req) as resp:
-        text = resp.read().decode('utf8').strip()
-        # text resp is email|ch|signature
-        splits = text.split('|')
-        if len(splits) != 9:
-            print("Badly formatted challenge response: %s" % text)
-            sys.exit(1)
-        return splits[2], splits[4], splits[6], splits[8]
+def get_result(feedback):
+    return parse_feedback(feedback).get('result')
 
-def challenge_response(login, passwd, ch):
-    sha1 = hashlib.sha1()
-    sha1.update("".join([ch, passwd]).encode('utf8'))
-    digest = sha1.hexdigest()
-    return digest
-
-
-def submit(parts_string):   
+def submit(parts_string):
     print('= Coding the Matrix Homework and Lab Submission')
 
     print('Importing your stencil file')
     try:
-        solution = __import__(asgn_name)
+        solution = importlib.import_module(asgn_package)
         test_vars = vars(solution).copy()
     except Exception as exc:
         print(exc)
-        print("!! It seems that you have an error in your stencil file. Please make sure Python can import your stencil before submitting, as in...")
-        print("""
-      underwood:matrix klein$ python3
-      Python 3.4.1 
-      >>> import """+asgn_name+"\n")
+        print("!! It seems that you have an error in your stencil file. Please make sure Python can import your stencil before submitting.")
         sys.exit(1)
 
-    if not 'coursera' in test_vars:
-        print("This is not a Coursera stencil.  Make sure your stencil is obtained from http://grading.codingthematrix.com/coursera/")
-        sys.exit(1)
-
-    
     print('Fetching problems')
     source_files, problems = get_asgn_data(asgn_name)
+    source_files = [asgn_folder + file_name for file_name in source_files]
 
     test_vars['test_format'] = test_vars['tf'] = test_format
     test_vars['find_lines'] = find_lines
@@ -237,20 +206,13 @@ def submit(parts_string):
     global login
     if not login:
         login = login_prompt()
-    global password
-    if not password:
-        password = password_prompt()
-    if not parts_string: 
+    if not parts_string:
         parts_string = parts_prompt(problems)
 
     parts = parse_parts(parts_string, problems)
 
     for sid, name, part_tests in parts:
         print('== Submitting "%s"' % name)
-
-        coursera_sid = asgn_name + '#' + sid
-        #TODO: check challenge stuff
-        ch_resp, state = do_challenge(login, password, coursera_sid)
 
         if dry_run:
             print(part_tests)
@@ -260,7 +222,7 @@ def submit(parts_string):
             # to stop Coursera's strip() from doing anything, we surround in parens
             results  = output(part_tests, test_vars)
             prog_out = '(%s)' % ''.join(map(str.rstrip, results))
-            src      = source(source_files)
+            src      = source(source_files, sid)
 
             if verbose:
                 res_itr = iter(results)
@@ -272,15 +234,27 @@ def submit(parts_string):
             if show_submission:
                 print('Submission:\n%s\n' % prog_out)
 
-            feedback = submit_solution(name, coursera_sid, prog_out, src, state, ch_resp)
-            print(feedback)
-
+            feedback = submit_solution(name, sid, prog_out, src)
+            if feedback:
+                if show_feedback:
+                    print(feedback)
+                result = get_result(feedback)
+                if result == 1:
+                    print('Correct answer verified for %s' % name)
+                elif result == 0:
+                    print('Incorrect answer for %s' % name)
+                elif result is None:
+                    print('Could not parse autograder response')
+                elif isinstance(result, int):
+                    print('%s has been graded (correctness not revealed)' % name)
+                else:
+                    print('Submission error: %s' % result)
+            else:
+                print('No response from autograder')
+        print()
 
 def login_prompt():
     return input('username: ')
-
-def password_prompt():
-    return input('password: ')
 
 def parts_prompt(problems):
     print('This assignment has the following parts:')
@@ -314,28 +288,28 @@ def parse_parts(string, problems):
     flat_parts = sum(parts, [])
     return sum((problems[i-1][1] for i in flat_parts if 0<i<=len(problems)), [])
 
-def submit_solution(name, sid, output, source_text, st, ch_resp):
+def submit_solution(name, sid, output, source):
     b64ize = lambda s: str(base64.encodebytes(s.encode('utf-8')), 'ascii')
-    values = { 'challenge_response'  : ch_resp
+    values = { 'name'                : name
              , 'assignment_part_sid' : sid
-             , 'email_address'       : login
+             , 'username'            : login
              , 'submission'          : b64ize(output)
-             , 'submission_aux'      : b64ize(source_text)
-             , 'state'               : st
+             , 'submit_version'      : SUBMIT_VERSION
+             , 'module_name'         : asgn_name
              }
-
+    if password: values['password'] = password
     submit_url = '%s://%s/submit' % (protocol, grader_url)
     data     = urllib.parse.urlencode(values).encode('utf-8')
     req      = urllib.request.Request(submit_url, data)
     with urllib.request.urlopen(req) as response:
-        return response.readall().decode('utf-8')
+        return response.read().decode('utf-8')
 
 def import_module(module):
     mpath, mname = os.path.split(module)
     mname = os.path.splitext(mname)[0]
     return imp.load_module(mname, *imp.find_module(mname, [mpath]))
 
-def source(source_files):
+def source(source_files, sid):
     src = ['# submit version: %s\n' % SUBMIT_VERSION]
     for fn in source_files:
         src.append('# %s' % fn)
@@ -347,12 +321,12 @@ def source(source_files):
 def strip(s): return s.strip() if isinstance(s, str) else s
 
 def canonicalize_key(key_value_pair):
-    return tuple(map(lambda s:s.strip(), (key_value_pair[0].upper(), key_value_pair[1])))
+    return (key_value_pair[0].upper(), key_value_pair[1])
 
 if __name__ == '__main__':
     try:
         f = open("profile.txt")
-        profile = dict([canonicalize_key(re.match("\s*([^\s]*)\s*(.*)\s*", line).groups()) for line in f])
+        profile = dict([canonicalize_key(re.match("\s*([^\s]*)\s*(.*)", line).groups()) for line in f])
     except (IOError, OSError):
         print("No profile.txt found")
         profile = {}
@@ -385,13 +359,13 @@ if __name__ == '__main__':
     parser.add_argument('--show-feedback', default=False, action='store_true', help=argparse.SUPPRESS)
 
     args = parser.parse_args()
-    asgn_name = os.path.splitext(args.assign)[0]
+    asgn_package = args.assign
+    asgn_folder = '/'.join(os.path.splitext(args.assign)[0].split('.')) + '/'
+    asgn_name = os.path.splitext(args.assign)[1].strip('.')
     report = args.report
     location = args.location
     dry_run = args.dry_run
     if args.protocol: protocol = args.protocol
-    challenge_url = '%s://class.coursera.org/%s/assignment/challenge' % (protocol, session)
-    print("CHALLENGE URL ", challenge_url)
     verbose = args.verbose
     show_submission = args.show_submission
     show_feedback = args.show_feedback

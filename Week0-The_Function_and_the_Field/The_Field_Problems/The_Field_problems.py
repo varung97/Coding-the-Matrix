@@ -20,11 +20,10 @@ def myFilter(L, num):
       >>> myFilter([10,15,20,25],10)
       [15, 25]
     '''
-    return [ x for x in L if x%num != 0]
+    pass
 
 
 ## 2: (Problem 2) Python Comprehensions: Lists of Lists
-
 def my_lists(L):
     '''
     >>> my_lists([1,2,4])
@@ -32,7 +31,7 @@ def my_lists(L):
     >>> my_lists([0,3])
     [[], [1, 2, 3]]
     '''
-    return [ [x+1 for x in range(i)]  for i in L]
+    pass
 
 
 ## 3: (Problem 3) Python Comprehensions: Function Composition
@@ -55,16 +54,9 @@ def myFunctionComposition(f, g):
       True
     '''
     #return { k1:v2 for k1 in f.keys() for v2 in g.values() if f.get(k1)==g.get  }
-    k1=list(f.keys())
-    v1=list(f.values())
-    k2=list(g.keys())
-    v2=list(g.values())
-    res={}
-    for i in range(len(f)):
-        for j in range(len(g)):
-            if v1[i]==k2[j]:
-                res[k1[i]]=v2[j]
-    return res
+    pass
+
+
 ## 4: (Problem 4) Summing numbers in a list
 def mySum(L):
     '''
@@ -72,17 +64,14 @@ def mySum(L):
       a list L of numbers
     Output:
       sum of the numbers in L
-Be sure your procedure works for the empty list.
+    Be sure your procedure works for the empty list.
     Examples:
       >>> mySum([1,2,3,4])
       10
       >>> mySum([3,5,10])
       18
     '''
-    current = 0
-    for x in L:
-        current = current + x
-    return current
+    pass
 
 
 ## 5: (Problem 5) Multiplying numbers in a list
@@ -99,11 +88,7 @@ Be sure your procedure works for the empty list.
       >>> myProduct([-3,2,4])
       -24
     '''
-    current = 1
-    for x in L:
-        current = current * x
-    return current
-
+    pass
 
 
 ## 6: (Problem 6) Minimum of a list
@@ -113,20 +98,15 @@ def myMin(L):
       a list L of numbers
     Output:
       the minimum number in L
-Be sure your procedure works for the empty list.
-Hint: The value of the Python expression float('infinity') is infinity.
+    Be sure your procedure works for the empty list.
+    Hint: The value of the Python expression float('infinity') is infinity.
     Examples:
     >>> myMin([1,-100,2,3])
     -100
     >>> myMin([0,3,5,-2,-5])
     -5
     '''
-    cur = L[0]
-    for i in range(1,len(L)):
-        if cur > L[i]:
-            cur = L[i]
-    return cur
-
+    pass
 
 
 ## 7: (Problem 7) Concatenation of a List
@@ -136,17 +116,14 @@ def myConcat(L):
       -L:a list of strings
     Output:
       -the concatenation of all the strings in L
-Be sure your procedure works for the empty list.
+    Be sure your procedure works for the empty list.
     Examples:
     >>> myConcat(['hello','world'])
     'helloworld'
     >>> myConcat(['what','is','up'])
     'whatisup'
     '''
-    S=''
-    for x in L:
-        S = S + x
-    return S
+    pass
 
 
 ## 8: (Problem 8) Union of Sets in a List
@@ -163,19 +140,16 @@ Be sure your procedure works for the empty list.
     >>> myUnion([set(),{3,5},{3,5}])
     {3, 5}
     '''
-    U=set()
-    for x in L:
-        U = U | x
-    return U
+    pass
 
 
 ## 9: (Problem 9) Complex Addition Practice
 # Each answer should be a Python expression whose value is a complex number.
 
-complex_addition_a = 5+3j
-complex_addition_b = 0+1j
-complex_addition_c = -1+0.001j
-complex_addition_d = 0.001+9j
+complex_addition_a = None
+complex_addition_b = None
+complex_addition_c = None
+complex_addition_d = None
 
 
 ## 10: (Problem 10) Combining Complex Operations
@@ -193,11 +167,10 @@ def transform(a, b, L):
     >>> transform(3,2,[1,2,3])
     [5, 8, 11]
     '''
-    return [ a*z+b for z in L]
+    pass
 
 
 ## 11: (Problem 11) GF(2) Arithmetic
-GF2_sum_1 = 1# answer with 0 or 1
-GF2_sum_2 = 0
-GF2_sum_3 = 0 
-
+GF2_sum_1 = None
+GF2_sum_2 = None
+GF2_sum_3 = None

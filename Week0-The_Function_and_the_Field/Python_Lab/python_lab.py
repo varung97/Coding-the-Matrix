@@ -12,7 +12,7 @@ minutes_in_week = 60*24*7
 
 
 ## 2: (Task 2) Remainder
-remainder_without_mod = 2304811 - 2304811//47 *47
+remainder_without_mod = 2304811 - 2304811//47 * 47
 
 
 
@@ -145,7 +145,7 @@ value_list = [ i[k] for i in dlist]
 ## 21: (Task 21) Extracting the value corresponding to k when it exists
 dlist = [{'Bilbo':'Ian','Frodo':'Elijah'},{'Bilbo':'Martin','Thorin':'Richard'}]
 k = 'Bilbo'
-#Replace [...] with a one-line comprehension 
+#Replace [...] with a one-line comprehension
 value_list_modified_1 = [ i[k] if k in i else 'NOT PRESENT' for i in dlist ] # <-- Use the same expression here
 k = 'Frodo'
 value_list_modified_2 = [i.get(k,'NOT PRESENT') for i in dlist] # <-- as you do here
@@ -191,7 +191,7 @@ def nextInts(L): return [ i+1 for i in L ]
 
 ## 27: (Task 27) Procedure cubes
 # Complete the procedure definition by replacing [ ... ] with a one-line list comprehension
-def cubes(L): return [ i*i*i for i in L ] 
+def cubes(L): return [ i*i*i for i in L ]
 
 
 
@@ -211,3 +211,4 @@ def dict2list(dct, keylist): return [ dct[i] for i in keylist ]
 # Complete the procedure definition by replacing { ... } with a one-line dictionary comprehension
 def list2dict(L, keylist): return { keylist[i]:L[i] for i in range(len(L)) }
 
+def all_3_digit_numbers(base, digits): return set(range(base**3))
