@@ -12,6 +12,8 @@
 ########                                     ########
 
 import os, sys, doctest, traceback, urllib.request, urllib.parse, urllib.error, base64, ast, re, imp, ast, importlib
+path_to_script = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, os.path.dirname(os.path.dirname(path_to_script)))
 
 SUBMIT_VERSION = '5.0'
 
