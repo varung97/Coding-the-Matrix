@@ -15,7 +15,9 @@ def getitem(v,k):
     >>> v['b']
     0
     """
-    return v.f[k] if k in v.f.keys() else 0
+    return v.f.get(k, 0)
+
+
 def setitem(v,k,val):
     """
     Set the element of v with label d to be val.
@@ -33,7 +35,8 @@ def setitem(v,k,val):
     >>> v['a']
     0
     """
-    v.f[k]=val
+    v.f[k] = val
+
 
 def equal(u,v):
     """
@@ -63,10 +66,8 @@ def equal(u,v):
 
     """
     assert u.D == v.D
-    for k in u.D:
-        if getitem(u,k)!=getitem(v,k):
-            return False
-    return True
+    return all((u[k] == v[k] for k in u.D))
+
 
 def add(u,v):
     """
@@ -92,10 +93,9 @@ def add(u,v):
     True
     """
     assert u.D == v.D
-    s=u.copy()
-    for k in u.D:
-        setitem(s,k,getitem(u,k)+getitem(v,k))
-    return s
+    return Vec(u.D, {dom: u[dom] + v[dom] for dom in u.f.keys() | v.f.keys()})
+
+
 def dot(u,v):
     """
     Returns the dot product of the two vectors.
@@ -125,10 +125,8 @@ def dot(u,v):
     12
     """
     assert u.D == v.D
-    s=0
-    for k in u.D:
-        s+= getitem(u,k)*getitem(v,k)
-    return s
+    return sum(u[dom] * v[dom] for dom in u.f.keys())
+
 
 def scalar_mul(v, alpha):
     """
@@ -145,10 +143,8 @@ def scalar_mul(v, alpha):
     >>> u == Vec({'x','y','z','w'},{'x':1,'y':2,'z':3,'w':4})
     True
     """
-    u=v.copy()
-    for k in v.D:
-        setitem(u,k, alpha*getitem(v,k))
-    return u
+    return Vec(v.D, {dom: alpha * value for dom, value in v.f.items()})
+
 
 def neg(v):
     """
@@ -163,10 +159,8 @@ def neg(v):
     True
 
     """
-    u=v.copy()
-    for k in v.D:
-        setitem(u,k, -1*getitem(v,k))
-    return u
+    return -1 * v
+
 
 ###############################################################################################################################
 

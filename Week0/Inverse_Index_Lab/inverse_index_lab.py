@@ -13,10 +13,7 @@ def movie_review(name):
     Input: the name of a movie
     Output: a string (one of the review options), selected at random using randint
     """
-    movie_reviews=['See it!', 'A gem!', 'Ideological claptrapl!']
-    return movie_reviews[randint(0, len(movie_reviews)-1)]
-
-
+    pass
 
 
 ## 2: (Task 2) Make Inverse Index
@@ -34,18 +31,8 @@ def makeInverseIndex(strlist):
     >>> makeInverseIndex(['hello world','hello','hello cat','hellolot of cats']) == {'hello': {0, 1, 2}, 'cat': {2}, 'of': {3}, 'world': {0}, 'cats': {3}, 'hellolot': {3}}
     True
     """
-    words=set()
-    tmpsets={}
-    for tmplist in strlist:
-        words |= set(tmplist.split())
-    for w in words:
-        tmpsetsVal=set()
-        for i in range(len(strlist)):
-            if w in strlist[i] and w in strlist[i].split():
-                tmpsetsVal |= {i}
-        tmpsets[w] = set(tmpsetsVal)
+    pass
 
-    return tmpsets
 
 ## 3: (Task 3) Or Search
 def orSearch(inverseIndex, query):
@@ -59,11 +46,8 @@ def orSearch(inverseIndex, query):
     >>> orSearch(idx, ['Johann', 'Carl'])
     {0, 2, 3, 4, 5}
     """
-    qSets=set()
-    for i in range(len(query)):
-        if query[i] in list(inverseIndex.keys()):
-            qSets |= inverseIndex[query[i]]
-    return qSets
+    pass
+
 
 ## 4: (Task 4) And Search
 def andSearch(inverseIndex, query):
@@ -78,9 +62,4 @@ def andSearch(inverseIndex, query):
     >>> andSearch(idx, ['Johann', 'Bach'])
     {0, 4}
     """
-    qSets=set(range(len(inverseIndex)))
-    for i in range(len(query)):
-        if query[i] in list(inverseIndex.keys()):
-            qSets &= inverseIndex[query[i]]
-    return qSets
-
+    pass

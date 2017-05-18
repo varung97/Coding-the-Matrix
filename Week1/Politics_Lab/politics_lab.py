@@ -12,8 +12,8 @@ coursera = 1
 def create_voting_dict(strlist):
     """
     Input: a list of strings.  Each string represents the voting record of a senator.
-           The string consists of 
-              - the senator's last name, 
+           The string consists of
+              - the senator's last name,
               - a letter indicating the senator's party,
               - a couple of letters indicating the senator's home state, and
               - a sequence of numbers (0's, 1's, and negative 1's) indicating the senator's
@@ -21,7 +21,7 @@ def create_voting_dict(strlist):
               all separated by spaces.
     Output: A dictionary that maps the last name of a senator
             to a list of numbers representing the senator's voting record.
-    Example: 
+    Example:
         >>> vd = create_voting_dict(['Kennedy D MA -1 -1 1 1', 'Snowe R ME 1 1 1 1'])
         >>> vd == {'Snowe': [1, 1, 1, 1], 'Kennedy': [-1, -1, 1, 1]}
         True
@@ -39,11 +39,7 @@ def create_voting_dict(strlist):
     The lists for each senator should preserve the order listed in voting data.
     In case you're feeling clever, this can be done in one line.
     """
-    d={}
-    for tmp in strlist:
-        tmp_l = tmp.split()
-        d[tmp_l[0]]=[ int(tmp_l[i]) for i in range(3, len(tmp_l)) ]
-    return d
+    pass
 
 
 ## 2: (Task 2.12.2) Policy Compare
@@ -57,15 +53,14 @@ def policy_compare(sen_a, sen_b, voting_dict):
         >>> voting_dict = {'Fox-Epstein':[-1,-1,-1,1],'Ravella':[1,1,1,1]}
         >>> policy_compare('Fox-Epstein','Ravella', voting_dict)
         -2
-    
+
     The code should correct compute dot-product even if the numbers are not all in {0,1,-1}.
         >>> policy_compare('A', 'B', {'A':[100,10,1], 'B':[2,5,3]})
         253
-        
+
     You should definitely try to write this in one line.
     """
-    return sum([ x[0]*x[1] for x in zip(voting_dict[sen_a], voting_dict[sen_b]) ])
-
+    pass
 
 
 ## 3: (Task 2.12.3) Most Similar
@@ -88,14 +83,7 @@ def most_similar(sen, voting_dict):
 
     Note that you can (and are encouraged to) re-use your policy_compare procedure.
     """
-    M=-float('infinity')
-    K=""
-    for k in list(voting_dict.keys()):
-        if k != sen and M <= policy_compare(sen, k, voting_dict):
-            M=policy_compare(sen, k, voting_dict)
-            K=k
-    return K
-
+    pass
 
 
 ## 4: (Task 2.12.4) Least Similar
@@ -115,19 +103,12 @@ def least_similar(sen, voting_dict):
         >>> least_similar('c', vd)
         'b'
     """
-    M=float('infinity')
-    K=""
-    for k in list(voting_dict.keys()):
-        if k != sen and M >= policy_compare(sen, k, voting_dict):
-            M=policy_compare(sen, k, voting_dict)
-            K=k
-    return K
-
+    pass
 
 
 ## 5: (Task 2.12.5) Chafee, Santorum
-most_like_chafee    = 'Jeffords'
-least_like_santorum = 'Feingold' 
+most_like_chafee    = None
+least_like_santorum = None
 
 
 
@@ -146,9 +127,10 @@ def find_average_similarity(sen, sen_set, voting_dict):
         >>> vd == {'Klein':[1,1,1], 'Fox-Epstein':[1,-1,0], 'Ravella':[-1,0,0], 'Oyakawa':[-1,-1,-1], 'Loery':[0,1,1]}
         True
     """
-    return sum([ policy_compare(sen, k, voting_dict) for k in sen_set  ])/len(sen_set)
+    pass
 
-most_average_Democrat = "Biden" # give the last name (or code that computes the last name)
+
+most_average_Democrat = None # give the last name (or code that computes the last name)
 # f= open('voting_record_dump109.txt')
 # mylist=list(f)
 # vd = create_voting_dict(mylist)
@@ -171,7 +153,7 @@ def find_average_record(sen_set, voting_dict):
     Input: a set of last names, a voting dictionary
     Output: a vector containing the average components of the voting records
             of the senators in the input set
-    Example: 
+    Example:
         >>> voting_dict = {'Klein': [-1,0,1], 'Fox-Epstein': [-1,-1,-1], 'Ravella': [0,0,1]}
         >>> senators = {'Fox-Epstein','Ravella'}
         >>> find_average_record(senators, voting_dict)
@@ -188,12 +170,10 @@ def find_average_record(sen_set, voting_dict):
         >>> find_average_record({'a'}, d)
         [0.0, 1.0, 1.0]
     """
-    #return sum([ policy_compare(k, k, voting_dict) for k in sen_set  ])/len(sen_set)
-    sen_L= [ 0 for x in range(len(list(voting_dict.values())[0]))]
-    for sen in sen_set:
-        sen_L=  [ sum(x) for x in zip(voting_dict[sen],sen_L) ]
-    return [ x/len(sen_set)  for x in sen_L]
-average_Democrat_record = [-0.16279069767441862, -0.23255813953488372, 1.0, 0.8372093023255814, 0.9767441860465116, -0.13953488372093023, -0.9534883720930233, 0.813953488372093, 0.9767441860465116, 0.9767441860465116, 0.9069767441860465, 0.7674418604651163, 0.6744186046511628, 0.9767441860465116, -0.5116279069767442, 0.9302325581395349, 0.9534883720930233, 0.9767441860465116, -0.3953488372093023, 0.9767441860465116, 1.0, 1.0, 1.0, 0.9534883720930233, -0.4883720930232558, 1.0, -0.32558139534883723, -0.06976744186046512, 0.9767441860465116, 0.8604651162790697, 0.9767441860465116, 0.9767441860465116, 1.0, 1.0, 0.9767441860465116, -0.3488372093023256, 0.9767441860465116, -0.4883720930232558, 0.23255813953488372, 0.8837209302325582, 0.4418604651162791, 0.9069767441860465, -0.9069767441860465, 1.0, 0.9069767441860465, -0.3023255813953488]# give the vector as a list
+    pass
+
+
+average_Democrat_record = None #give the vector as a list
 # print(find_average_record(sen_set, vd))
 
 
@@ -204,20 +184,10 @@ def bitter_rivals(voting_dict):
            their voting records
     Output: a tuple containing the two senators who most strongly
             disagree with one another.
-    Example: 
+    Example:
         >>> voting_dict = {'Klein': [-1,0,1], 'Fox-Epstein': [-1,-1,-1], 'Ravella': [0,0,1]}
         >>> br = bitter_rivals(voting_dict)
         >>> br == ('Fox-Epstein', 'Ravella') or br == ('Ravella', 'Fox-Epstein')
         True
     """
-    x=""
-    y=""
-    M=float("infinity")
-    for sen_a in voting_dict.keys():
-        for sen_b in voting_dict.keys():
-            if sen_a != sen_b and M >=  policy_compare(sen_a, sen_b, voting_dict):
-                M = policy_compare(sen_a, sen_b, voting_dict)
-                x = sen_a
-                y = sen_b
-    return (x,y)
-
+    pass
