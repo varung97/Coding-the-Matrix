@@ -207,7 +207,10 @@ def submit(parts_string):
     if not login:
         login = login_prompt()
     if not parts_string:
-        parts_string = parts_prompt(problems)
+        if not all_sub:
+            parts_string = parts_prompt(problems)
+        else:
+            parts_string = '1-' + str(len(problems))
 
     parts = parse_parts(parts_string, problems)
 
@@ -338,6 +341,7 @@ if __name__ == '__main__':
             , 'your password (optional)'
             , 'your geographical location (optional, used for mapping activity)'
             , 'display tests without actually running them'
+            , 'submit all problems'
             , 'specify where to send the results'
             , 'use an encrypted connection to the grading server'
             , 'use an unencrypted connection to the grading server'
@@ -349,6 +353,7 @@ if __name__ == '__main__':
     parser.add_argument('--password', default=profile.get('PASSWORD',None), help=next(ihelp))
     parser.add_argument('--location', default=profile.get('LOCATION',None), help=next(ihelp))
     parser.add_argument('--dry-run', default=False, action='store_true', help=next(ihelp))
+    parser.add_argument('--all', default=False, action='store_true', help=next(ihelp))
     parser.add_argument('--report', default=profile.get('REPORT',None), help=next(ihelp))
     group = parser.add_mutually_exclusive_group()
     group.add_argument('--https', dest="protocol", const="https", action="store_const", help=next(ihelp))
@@ -366,6 +371,7 @@ if __name__ == '__main__':
     report = args.report
     location = args.location
     dry_run = args.dry_run
+    all_sub = args.all
     if args.protocol: protocol = args.protocol
     verbose = args.verbose
     show_submission = args.show_submission
