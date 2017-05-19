@@ -3,8 +3,8 @@ coursera = 1
 # Please fill out this stencil and submit using the provided submission script.
 
 from vec import Vec
-from itertools import *
 from GF2 import one
+from vecutil import list2vec, zero_vec
 
 
 ## 1: (Problem 1) Vector Comprehension and Sum
@@ -18,10 +18,8 @@ def vec_select(veclist, k):
     >>> vec_select([v1, v2, v3, v4], 'a') == [Vec(D,{'b': 1}), Vec(D,{'b': 2})]
     True
     '''
-    V_L = [ v for v in veclist if v[k]==0]
-    for v in V_L:
-        v.f = { x:y for (x,y) in v.f.items() if x!=k }
-    return V_L
+    return [v for v in veclist if v[k] == 0]
+
 
 def vec_sum(veclist, D):
     '''
@@ -33,10 +31,9 @@ def vec_sum(veclist, D):
     >>> vec_sum([v1, v2, v3, v4], D) == Vec(D, {'b': 13, 'a': 11})
     True
     '''
-    S=Vec(D,{})
-    for v in veclist:
-        S += v
-    return S
+    return sum(veclist, zero_vec(D))
+
+
 def vec_select_sum(veclist, k, D):
     '''
     >>> D = {'a','b','c'}
@@ -47,7 +44,7 @@ def vec_select_sum(veclist, k, D):
     >>> vec_select_sum([v1, v2, v3, v4], 'a', D) == Vec(D, {'b': 3})
     True
     '''
-    return vec_sum(vec_select(veclist,k), D)
+    return vec_sum(vec_select(veclist, k), D)
 
 
 ## 2: (Problem 2) Vector Dictionary
@@ -61,8 +58,8 @@ def scale_vecs(vecdict):
     >>> [v in [Vec({1,2,4},{2: 3.0}), Vec({1,2,4},{1: 0.2, 2: 0.4, 4: 1.6})] for v in result]
     [True, True]
     '''
-    #return [ Vec(v.D, { x:y/scale for (x,y) in v.f.items() }) for (scale, v) in vecdict.items() ]
-    return [ 1/scale*v for (scale, v) in vecdict.items() ]
+    return [v/k for k, v in vecdict.items()]
+
 
 ## 3: (Problem 3) Constructing span of given vectors over GF(2)
 def GF2_span(D, S):
@@ -79,10 +76,14 @@ def GF2_span(D, S):
     >>> S == {Vec({0, 1},{1: one}), Vec({0, 1},{0: one})}
     True
     '''
-    Span=set()
-    for Coef in list(product([0, one], repeat=len(S))):
-        Span.add(vec_sum([x[0]*x[1]  for x in zip(Coef, S)], D))
-    return Span
+    if len(S) == 0:
+        return set([zero_vec(D)])
+    else:
+        newS = set(S)
+        v = newS.pop()
+        part_sol = GF2_span(D, newS)
+        return part_sol | {v + x for x in part_sol}
+
 
 ## 4: (Problem 4) Is it a vector space 1
 # Answer with a boolean, please.
@@ -98,7 +99,7 @@ is_a_vector_space_2 = True
 
 ## 6: (Problem 6) Is it a vector space 3
 # Answer with a boolean, please.
-is_a_vector_space_3 = False 
+is_a_vector_space_3 = False
 
 
 
@@ -106,4 +107,3 @@ is_a_vector_space_3 = False
 # Answer with a boolean, please.
 is_a_vector_space_4a = True
 is_a_vector_space_4b = False
-
